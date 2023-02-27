@@ -7,6 +7,9 @@ pub struct Rustris {
     game: Core
 }
 
+const DRAW_X: i32 = (640 - 160) / 2;
+const DRAW_Y: i32 = (480 - 320) / 2;
+
 impl Rustris {
     pub fn new() -> Self {
         Self {

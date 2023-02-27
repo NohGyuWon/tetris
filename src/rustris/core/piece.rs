@@ -9,6 +9,7 @@ pub struct Piece {
 
     pub x: i32,
     pub y: i32,
+    pub tspin_state: TSpinType
 }
 
 impl Piece {
@@ -107,6 +108,7 @@ impl Piece {
             x: 3,
             y: 21 - size.1,
             rotate_state: 0,
+            tspin_state: TSpinType::None
         }
     }
 
