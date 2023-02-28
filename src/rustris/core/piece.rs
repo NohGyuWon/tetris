@@ -154,6 +154,7 @@ impl Piece {
 
             false
         } else {
+            self.tspin_state = TSpinType::None;
             true
         }
     }
@@ -186,6 +187,7 @@ impl Piece {
 
             if self.test(board) {
                 self.rotate_state = next_rotate_state;
+                self.tspin_update(board);
 
                 return true;
             }
@@ -215,6 +217,7 @@ impl Piece {
 
         if self.test(board) {
             self.rotate_state = next_rotate_state;
+            self.tspin_update(board);
 
             return true;
         }
@@ -222,5 +225,31 @@ impl Piece {
         self.blocks = copied;
 
         false
+    }
+
+    fn tspin_update(&mut self, board: &Board) {
+        if self.piece_type == PieceType::T {
+            let corner_states = [
+                if board.get_block(self.x, self.y + 2) != BlockType::Empty { 1 } else { 0 },
+                if board.get_block(self.x + 2, self.y + 2) != BlockType::Empty { 1 } else { 0 },
+                if board.get_block(self.x + 2, self.y) != BlockType::Empty { 1 } else { 0 },
+                if board.get_block(self.x, self.y) != BlockType::Empty { 1 } else { 0 },
+            ];
+
+            if corner_states[0] + corner_states[1] + corner_states[2] + corner_states[3] >= 3 {
+                let front_0 = (0 + self.rotate_state) & 0x03;
+                let front_1 = (1 + self.rotate_state) & 0x03;
+
+                if corner_states[front_0 as usize] == 1 && corner_states[front_1 as usize] == 1 {
+                    self.tspin_state = TSpinType::Normal;
+                } else {
+                    self.tspin_state = TSpinType::Mini;
+                }
+            } else {
+                self.tspin_state = TSpinType::None;
+            }
+        } else {
+            self.tspin_state = TSpinType::None;
+        }
     }
 }
